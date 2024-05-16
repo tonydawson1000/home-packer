@@ -17,3 +17,5 @@ crash.log
 
 *.iso
 *manifest.json
+*.DS_Store
+SHA256SUMS
