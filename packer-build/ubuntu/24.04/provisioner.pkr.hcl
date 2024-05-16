@@ -17,8 +17,8 @@ locals {
   # iso_checksum = var.iso_checksum == "" ? "file:https://cdimage.ubuntu.com/releases/${var.version}/release/SHA256SUMS" : var.iso_checksum
 
   # Locally Hosted ISO and Checksum
-  isos_url     = var.iso_url == "" ? "iso/${var.version}/ubuntu-${var.version}-live-server-arm64.iso" : var.iso_url
-  iso_checksum = var.iso_checksum == "" ? "file:./iso/${var.version}/SHA256SUMS" : var.iso_checksum
+  isos_url     = var.iso_url == "" ? "../../iso/ubuntu/${var.version}/ubuntu-${var.version}-live-server-arm64.iso" : var.iso_url
+  iso_checksum = var.iso_checksum == "" ? "file:./../../iso/ubuntu/${var.version}/SHA256SUMS" : var.iso_checksum
 
   ssh_username = var.create_vagrant_box ? "vagrant" : var.ssh_username == "" ? var.user.username : var.ssh_username
   ssh_password = var.create_vagrant_box ? "vagrant" : var.ssh_password == "" ? var.user.password : var.ssh_password
@@ -32,7 +32,7 @@ locals {
   addons       = join(",", var.addons)
 }
 
-source "parallels-iso" "image" {
+source "parallels-iso" "ubuntu-24-04" {
   guest_os_type          = "ubuntu"
   parallels_tools_flavor = "lin-arm"
   parallels_tools_mode   = "upload"
@@ -51,10 +51,10 @@ source "parallels-iso" "image" {
   iso_url             = local.isos_url
 
   http_content = {
-    "/ubuntu/user-data"          = templatefile("${path.root}/http/ubuntu/user-data.pkrtpl.hcl", { username = "${local.username}", hostname = "${local.hostname}", password = "${local.encrypted_password}" })
-    "/ubuntu/meta-data"          = templatefile("${path.root}/http/ubuntu/meta-data.pkrtpl.hcl", { hostname = "${local.hostname}" })
-    "/ubuntu/preseed-hyperv.cfg" = templatefile("${path.root}/http/ubuntu/preseed-hyperv.cfg.pkrtpl.hcl", { username = "${local.username}", password = "${local.password}" })
-    "/ubuntu/preseed.cfg"        = templatefile("${path.root}/http/ubuntu/preseed.cfg.pkrtpl.hcl", { username = "${local.username}", password = "${local.password}" })
+    "/ubuntu/user-data"          = templatefile("${path.root}/../../http/ubuntu/user-data.pkrtpl.hcl", { username = "${local.username}", hostname = "${local.hostname}", password = "${local.encrypted_password}" })
+    "/ubuntu/meta-data"          = templatefile("${path.root}/../../http/ubuntu/meta-data.pkrtpl.hcl", { hostname = "${local.hostname}" })
+    "/ubuntu/preseed-hyperv.cfg" = templatefile("${path.root}/../../http/ubuntu/preseed-hyperv.cfg.pkrtpl.hcl", { username = "${local.username}", password = "${local.password}" })
+    "/ubuntu/preseed.cfg"        = templatefile("${path.root}/../../http/ubuntu/preseed.cfg.pkrtpl.hcl", { username = "${local.username}", password = "${local.password}" })
   }
 
   output_directory = local.output_dir

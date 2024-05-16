@@ -1,6 +1,12 @@
 # home-packer
 Hashicorp Packer Base Image Builder
 
+### Packer has lots of 'Integrations'
+
+- [Packer Integrations](https://developer.hashicorp.com/packer/integrations)
+
+
+
 ### Packer uses HCL now by default (json usage has been deprecated)
 
 - Packer Template files must now use have `.pkr.hcl` file extention
