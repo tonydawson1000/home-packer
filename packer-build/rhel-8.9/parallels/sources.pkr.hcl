@@ -3,20 +3,19 @@ locals {
 
   version = replace(var.version, ".", "_")
 
-  # Remotely Hosted ISO and Checksum
-  # iso_url = var.iso_url == "" ? "https://cdimage.ubuntu.com/releases/${var.version}/release/ubuntu-${var.version}-live-server-arm64.iso" : var.iso_url
-  # iso_checksum = var.iso_checksum == "" ? "file:https://cdimage.ubuntu.com/releases/${var.version}/release/SHA256SUMS" : var.iso_checksum
-
   # Locally Hosted ISO and Checksum
-  iso_url      = var.iso_url == "" ? "../../iso/ubuntu-${var.version}/ubuntu-${var.version}-live-server-${var.arch}.iso" : var.iso_url
-  iso_checksum = var.iso_checksum == "" ? "file:./../../iso/ubuntu-${var.version}/SHA256SUMS" : var.iso_checksum
+  iso_url      = var.iso_url == "" ? "../../iso/rhel-${var.version}/rhel-${var.version}-${var.arch}-boot.iso" : var.iso_url
+  iso_checksum = var.iso_checksum == "" ? "file:./../../iso/rhel-${var.version}/SHA256SUMS" : var.iso_checksum
 
-  machine_name = var.machine_name == "" ? "ubuntu-${local.version}-base-${local.timestamp}" : var.machine_name
-  # hostname = var.hostname == "" ? "ubuntu_${local.version}-base" : var.hostname
+  machine_name = var.machine_name == "" ? "rhel-${local.version}-base-${local.timestamp}" : var.machine_name
+  # hostname = var.hostname == "" ? "rhel_${local.version}-base" : var.hostname
 
   boot_command = length(var.boot_command) == 0 ? [
-    "<wait>e<wait><down><down><down><end><wait> this is where we enter autoinstall ..."
-    //     "<wait>e<wait><down><down><down><end><wait> autoinstall ds=nocloud-net\\;s=http://{{.HTTPIP}}:{{.HTTPPort}}/ubuntu/<f10><wait>"
+    "<wait><up>e<wait> this is where we enter autoinstall ..."
+    //     "<wait>",
+    //     "<up>e<wait>",
+    //     // "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+    //     "<down><down><end> inst.text inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/rhel-${local.version}/ks.cfg<F10><wait>"
   ] : var.boot_command
 
   ssh_username = var.create_vagrant_box ? "vagrant" : var.ssh_username == "" ? var.user.username : var.ssh_username
@@ -33,8 +32,8 @@ locals {
   # addons       = join(",", var.addons)
 }
 
-source "parallels-iso" "ubuntu-jammy" {
-  guest_os_type          = "ubuntu"
+source "parallels-iso" "rhel-8" {
+  guest_os_type          = "rhel"
   parallels_tools_flavor = "lin-arm"
   parallels_tools_mode   = "upload"
   prlctl = [
@@ -56,11 +55,7 @@ source "parallels-iso" "ubuntu-jammy" {
   boot_command = local.boot_command
 
   // http_content = {
-  //   "/ubuntu/user-data"          = templatefile("${path.root}/../../http/ubuntu/user-data.pkrtpl.hcl", { username = "${local.username}", hostname = "${local.hostname}", password = "${local.encrypted_password}" })
-  //   "/ubuntu/meta-data"          = templatefile("${path.root}/../../http/ubuntu/meta-data.pkrtpl.hcl", { hostname = "${local.hostname}" })
-  //   "/ubuntu/preseed-hyperv.cfg" = templatefile("${path.root}/../../http/ubuntu/preseed-hyperv.cfg.pkrtpl.hcl", { username = "${local.username}", password = "${local.password}" })
-  //   "/ubuntu/preseed.cfg"        = templatefile("${path.root}/../../http/ubuntu/preseed.cfg.pkrtpl.hcl", { username = "${local.username}", password = "${local.password}" })
-  // }
+  //     "/rhel/ks.cfg" = templatefile("${path.root}/../http/redhat/ks.cfg.pkrtpl.hcl", { username = "${local.username}", password = "${local.password}", hostname = "${local.hostname}", package = "${var.install_desktop ? "@^graphical-server-environment" : "@^server-product-environment"}" })
 
   communicator = "ssh"
 
@@ -71,7 +66,7 @@ source "parallels-iso" "ubuntu-jammy" {
   ssh_port         = var.ssh_port
   ssh_wait_timeout = var.ssh_wait_timeout
 
-  shutdown_command = "echo '${local.username}' | sudo -S shutdown -P now"
+  shutdown_command = "echo '${local.username}' | sudo -S /sbin/halt -h -p"
 
   shutdown_timeout = var.shutdown_timeout
 

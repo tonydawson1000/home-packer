@@ -2,7 +2,7 @@
 
 variable "version" {
   type    = string
-  default = "22.04.4"
+  default = "8.9"
 }
 
 variable "arch" {

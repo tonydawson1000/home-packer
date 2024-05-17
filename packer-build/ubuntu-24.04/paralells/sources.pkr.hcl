@@ -33,7 +33,7 @@ locals {
   # addons       = join(",", var.addons)
 }
 
-source "parallels-iso" "ubuntu-jammy" {
+source "parallels-iso" "ubuntu-noble" {
   guest_os_type          = "ubuntu"
   parallels_tools_flavor = "lin-arm"
   parallels_tools_mode   = "upload"

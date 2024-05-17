@@ -1,3 +1,15 @@
+# Treat Packer variables as constants — you cannot update them during run time.
+
+variable "version" {
+  type    = string
+  default = "24.04"
+}
+
+variable "arch" {
+  type    = string
+  default = "x86_64"
+}
+
 variable "user" {
   type = object({
     username              = string
@@ -13,9 +25,14 @@ variable "user" {
   }
 }
 
-variable "version" {
+variable "iso_url" {
   type    = string
-  default = "24.04"
+  default = ""
+}
+
+variable "iso_checksum" {
+  type    = string
+  default = ""
 }
 
 variable "machine_name" {
@@ -23,10 +40,10 @@ variable "machine_name" {
   default = ""
 }
 
-variable "hostname" {
-  type    = string
-  default = ""
-}
+// variable "hostname" {
+//   type    = string
+//   default = ""
+// }
 
 variable "machine_specs" {
   type = object({
@@ -41,29 +58,14 @@ variable "machine_specs" {
   }
 }
 
-variable "boot_command" {
-  type    = list(string)
-  default = []
-}
-
 variable "boot_wait" {
   type    = string
   default = "10s"
 }
 
-variable "iso_url" {
-  type    = string
-  default = ""
-}
-
-variable "iso_checksum" {
-  type    = string
-  default = ""
-}
-
-variable "shutdown_timeout" {
-  type    = string
-  default = "15m"
+variable "boot_command" {
+  type    = list(string)
+  default = []
 }
 
 variable "ssh_username" {
@@ -91,22 +93,17 @@ variable "ssh_wait_timeout" {
   default = "10000s"
 }
 
-variable "addons" {
-  type    = list(string)
-  default = []
-}
-
 variable "create_vagrant_box" {
   type    = bool
   default = false
 }
 
-variable "output_directory" {
+variable "shutdown_timeout" {
   type    = string
-  default = ""
+  default = "15m"
 }
 
-variable "output_vagrant_directory" {
+variable "output_directory" {
   type    = string
   default = ""
 }
